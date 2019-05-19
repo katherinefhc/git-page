@@ -108,7 +108,7 @@
 
 			document.querySelector('.btn').addEventListener('click', function(e) {
 				let c = this.previousElementSibling.control.value || '';
-				c = c.split(',').sort(naturalSort);
+				c = c.replace(/\</gm, '&lt;').split(',').sort(naturalSort);
 				populateUI(c);
 			});
 		})();
