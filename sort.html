@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+	<title>Natural Sort</title>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="https://meyerweb.com/eric/tools/css/reset/reset.css">
+	<style type="text/css">
+		:root {
+			--dark-primary: #455A64;
+			--light-primary: #CFD8DC;
+			--primary: #607D8B;
+			--accent: #009688;
+			--dark: #212121;
+			--light: #FFFFFF;
+		}
+		.body {
+			display: grid;
+			height: 100vh;
+			grid-template-rows: minmax(min-content, 30%) minmax(50%, 70%);
+			font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+			line-height: 1.4;
+			color: var(--dark);
+		}
+		.body, input, button { font-size: 18px; }
+		.entry {
+			background: var(--primary);
+			color: var(--light);
+			padding: 1em;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			z-index: 10;
+			box-shadow: 0 2px 6px rgba(0,0,0,.2);
+		}
+		.entry__input {
+			margin-top: 8px;
+			margin-bottom: 8px;
+			border: 1px solid var(--dark-primary);
+			border-radius: 4px;
+		}
+		.entry__input::placeholder {
+			color: var(--light-primary);
+		}
+		.results__list {
+			height: 100%;
+			overflow: auto;
+		}
+		.results__list li {
+			padding-left: 2em;
+			font-weight: bold;
+		}
+		.results__list li:nth-child(even) {
+			background: #F7F7F7;
+		}
+		.results__list li::before {
+			content: attr(data-number);
+			padding-right: 2em;
+			opacity: .2;
+		}
+		.w100 {
+			width: 100%;
+		}
+		.btn {
+			background: var(--accent) none repeat scroll 0% 0%;
+			color: var(--light);
+			padding: 8px 16px;
+			border-radius: 8px;
+			border: 0;
+			box-shadow: 0 3px 10px rgba(0,0,0,.23),0 3px 10px rgba(0,0,0,.16);
+		}
+	</style>
+</head>
+<body class="body">
+	<div class="entry">
+		<label class="w100">
+			<p>Enter Comma-Separated Values:</p>
+			<input class="w100 entry__input" type="text" name="to-sort" placeholder="which,order,do,these,sort,?" autofocus />
+		</label>
+		<button class="btn">Sort 'Em!</button>
+	</div>
+	<div class="results">
+		<ul class="results__list"></ul>
+	</div>
+	<script type="text/javascript">
+		(() => {
+			const naturalSort = (a = '', b = '') => {
+				// cast to strings
+				const v1 = `${a}`;
+				const v2 = `${b}`;
+
+				return v1.localeCompare(v2, 'en', { numeric: true })
+				// localeCompare returns 0 if values are numerically equal (like 01 and 1)
+				// so do a length comparison in this case to make results consistent
+				|| v1.length - v2.length;
+			}
+
+			const populateUI = (v = []) => {
+				document.querySelector('.results__list').innerHTML = v.map((m, i) => `<li data-number=${i}>${m}</li>`).join('');
+			}
+
+			const d = Array(95).fill(32).map((a, i) => String.fromCharCode(a + i)).sort(naturalSort);
+			populateUI(d);
+
+			document.querySelector('.btn').addEventListener('click', function(e) {
+				let c = this.previousElementSibling.control.value || '';
+				c = c.split(',').sort(naturalSort);
+				populateUI(c);
+			});
+		})();
+	</script>
+</body>
+</html>
